@@ -79,9 +79,18 @@ class Program
                     break;
                 default:
                     Console.WriteLine("Opcion invalida, intenta de nuevo");
+                    pressKey();
                     break;
             }
         }
+    }
+
+    //Funcion para devolver al usuario al menu 
+    public static void pressKey()
+    {
+        // Esperar a que el usuario presione cualquier tecla para continuar
+        Console.WriteLine("\nPresiona cualquier tecla para volver al menú principal...");
+        Console.ReadKey(true);
     }
 
     //Metodo para agregar un producto al inventario
@@ -126,30 +135,33 @@ class Program
 
         Console.WriteLine("Producto agregado satisfactoriamente");
 
-        // Esperar a que el usuario presione cualquier tecla para continuar
-        Console.WriteLine("\nPresiona cualquier tecla para volver al menú principal...");
-        Console.ReadKey(true);
+        //Devolver al menu principal 
+        pressKey();
     }
 
     //Metodo para actualizar stock de productos por nombre
     public static void UpdateStock(List<Product> inventory)
     {
         Console.Clear(); // Limpiar la consola
+
+        //Layout del inventario
+        InventoryLayout(inventory);
+
         Console.WriteLine(
 @"###############################################################################################
 #                             ACTUALIZAR STOCK DE UN PRODUCTO                                 #
 ###############################################################################################");
         Console.WriteLine();
-        Console.Write("Ingresa el nombre del producto que deseas actualizar --> ");
-        string? name = Console.ReadLine();
+        Console.Write("Ingresa el Nro del producto que deseas actualizar --> ");
+        string? input = Console.ReadLine();
 
-        //Se busca el producto en la lista de inventario 
-        Product? product = inventory.Find(p => p.Name.Equals(name, StringComparison.OrdinalIgnoreCase));
-
-        //Se verifica que la busqueda no devuelva null
-        if (product != null)
+        //Se verifica que el input sea un numero valido
+        if (int.TryParse(input, out int productIndex) && productIndex >= 0 && productIndex < inventory.Count)
         {
-            Console.Write("Ingrese la nueva cantidad --> ");
+            //Accedo al producto usando el indice
+            Product product = inventory[productIndex];
+
+            Console.Write($"Ingrese la nueva cantidad para {product.Name} --> ");
             int availableQuantity = Convert.ToInt32(Console.ReadLine());
 
             //Actualizamos la cantidad en el inventario
@@ -161,6 +173,9 @@ class Program
             Console.Write("############## Producto no encontrado ##############");
             Console.WriteLine();
         }
+
+        //Devolver al menu principal
+        pressKey();
     }
 
     //Metodo para buscar un producto por nombre
@@ -187,10 +202,13 @@ class Program
         {
             Console.WriteLine("############## Producto no encontrado ##############");
         }
-    }
 
-    //Metodo para mostrar inventario completo
-    public static void DisplayInventory(List<Product> inventory)
+        //Devuelve al usuario al menu principal
+        pressKey();
+    }
+    
+    //Layout del inventario
+    public static void InventoryLayout(List<Product> inventory)
     {
         Console.Clear(); // Limpiar la consola
         Console.WriteLine(
@@ -224,25 +242,34 @@ Nro | Nombre                                   | Valor         | Cantidad   | To
 @$"                      Total general de inventario: {totalGeneral:C}                                 |");
         Console.WriteLine(
 @"-----------------------------------------------------------------------------------------------");
+    }
 
-        Console.WriteLine("\nPresiona cualquier tecla para volver al menu principal...");
-        Console.ReadKey(true); // Espera a que el usuario presione cualquier tecla
+    //Metodo para mostrar inventario completo
+    public static void DisplayInventory(List<Product> inventory)
+    {
+        //Invocamos el Layout
+        InventoryLayout(inventory);
+
+        //Devolver al usuario al menu principal
+        pressKey();
     }
 
     //Metodo para eliminar un producto del inventario
     public static void DeleteProduct(List<Product> inventory)
     {
+        //Invocamos el Layout
+        InventoryLayout(inventory);
+
         //Se le pide nombre al usuario del producto a eliminar
-        Console.WriteLine();
-        Console.Write("Ingresa el nombre del producto que deseas eliminar --> ");
-        string? name = Console.ReadLine();
+        Console.Write("Ingresa el Nro del producto que deseas eliminar --> ");
+        string? input = Console.ReadLine();
 
-        //Se busca el producto en la lista del inventario por su nombre
-        Product? product = inventory.Find(p => p.Name.Equals(name, StringComparison.OrdinalIgnoreCase));
-
-        //Se verifica que la busqueda no devuelva null
-        if (product != null)
+        //Se verifica que el input sea un numero valido
+        if (int.TryParse(input, out int productIndex) && productIndex >= 0 && productIndex < inventory.Count)
         {
+            //Accedo al producto usando el indice
+            Product product = inventory[productIndex];
+
             //Pedimos al usuario confirmacion para eliminar producto
             Console.Write($"¿Estas seguro que deseas eliminar el producto: {product.Name}? (s/n) ");
             char userConfirmation = Console.ReadKey().KeyChar;
@@ -267,11 +294,7 @@ Nro | Nombre                                   | Valor         | Cantidad   | To
             Console.WriteLine("\n############## Producto no encontrado ##############");
         }
 
-        // Esperar a que el usuario presione cualquier tecla para continuar
-        Console.WriteLine("\nPresiona cualquier tecla para volver al menú principal...");
-        Console.ReadKey(true);
+        //Devolver  al menu principal
+        pressKey();
     }
 }
-
-//Me falta mostrar al usuario los productos en el metodo UpdateStock y DeleteProduct para que pueda saber que va a actualizar y eliminar respectivamente
-//Me falta poder mostrarle al usuario los mensajes de error por malas entradas o datos no encontrados en : BUSCAR PRODUCTO , 
